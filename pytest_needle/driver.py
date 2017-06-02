@@ -35,6 +35,8 @@ DEFAULT_VIEWPORT_SIZE = '1024x768'
 
 
 class NeedleDriver(object):
+    """NeedleDriver instance
+    """
 
     ENGINES = {
         'pil': DEFAULT_ENGINE,
@@ -74,7 +76,8 @@ class NeedleDriver(object):
         self.set_viewport_size(self.viewport_width, self.viewport_height)
 
         # Instantiate the diff engine
-        self.engine_class = self.ENGINES.get(kwargs.get('needle_engine', 'pil').lower(), DEFAULT_ENGINE)
+        engine_config = kwargs.get('needle_engine', 'pil').lower()
+        self.engine_class = self.ENGINES.get(engine_config, DEFAULT_ENGINE)
 
         klass = import_from_string(self.engine_class)
         self.engine = klass()
@@ -83,7 +86,8 @@ class NeedleDriver(object):
     def _create_dir(directory):
         """Recursively create a directory
 
-        .. note:: From needle https://github.com/python-needle/needle/blob/master/needle/cases.py#L125
+        .. note:: From needle
+            https://github.com/python-needle/needle/blob/master/needle/cases.py#L125
 
         :param str directory: Directory path to create
         :return:
@@ -103,7 +107,8 @@ class NeedleDriver(object):
     def set_viewport_size(self, width, height):
         """Readjust viewport to size specified
 
-        .. note:: From needle https://github.com/python-needle/needle/blob/master/needle/cases.py#L151
+        .. note:: From needle
+            https://github.com/python-needle/needle/blob/master/needle/cases.py#L151
 
         :param int width: Viewport width
         :param int height: Viewport height
@@ -121,17 +126,21 @@ class NeedleDriver(object):
 
     def get_screenshot_as_image(self, element=None):
         """Returns screenshot image
-        
+
         :param element: Crop image to element (Optional)
         :return:
         """
 
-        fh = IOClass(base64.b64decode(self.driver.get_screenshot_as_base64().encode('ascii')))
-        image = Image.open(fh).convert('RGB')
+        stream = IOClass(base64.b64decode(self.driver.get_screenshot_as_base64().encode('ascii')))
+        image = Image.open(stream).convert('RGB')
 
         if element:
 
-            window_size = (self.driver.get_window_size()['width'], self.driver.get_window_size()['height'])
+            window_size = (
+                self.driver.get_window_size()['width'],
+                self.driver.get_window_size()['height']
+            )
+
             image_size = image.size
 
             # Get dimensions of element
@@ -169,8 +178,9 @@ class NeedleDriver(object):
 
     def assert_screenshot(self, file_path, element_or_selector=None, threshold=0):
         """Fail if new fresh image is too dissimilar from the baseline image
-        
-        .. note:: From needle https://github.com/python-needle/needle/blob/master/needle/cases.py#L161
+
+        .. note:: From needle
+            https://github.com/python-needle/needle/blob/master/needle/cases.py#L161
 
         :param str file_path: File name for baseline image
         :param element_or_selector:
@@ -197,7 +207,8 @@ class NeedleDriver(object):
             distance = abs(diff.get_distance())
 
             if distance > threshold:
-                pytest.fail('Fail: New screenshot did not match the baseline (by a distance of %.2f)' % distance)
+                pytest.fail('Fail: New screenshot did not match the '
+                            'baseline (by a distance of %.2f)' % distance)
 
         else:
 
