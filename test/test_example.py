@@ -19,8 +19,8 @@ def test_example_page(needle):
     # Navigate to web page
     needle.driver.get('https://www.google.com')
 
-    # Take a entire page screen diff
-    needle.assert_screenshot('search_page')
+    # Take a entire page screen diff, ignore the doodle banner
+    needle.assert_screenshot('search_page', threshold=60, exclude=[(By.ID, 'hplogo'), (By.ID, 'prm')])
 
 
 @pytest.mark.element

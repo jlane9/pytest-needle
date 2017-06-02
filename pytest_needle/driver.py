@@ -13,7 +13,7 @@ import sys
 import pytest
 from needle.cases import import_from_string
 from needle.engines.pil_engine import ImageDiff
-from PIL import Image
+from PIL import Image, ImageDraw, ImageColor
 from selenium.webdriver.remote.webdriver import WebElement
 
 
@@ -104,6 +104,59 @@ class NeedleDriver(object):
 
             raise err
 
+    def _find_element(self, element_or_selector=None):
+        """Returns an element
+
+        :param element_or_selector: WebElement or tuple containing selector ex. ('id', 'mainPage')
+        :return:
+        """
+
+        if isinstance(element_or_selector, tuple):
+
+            elements = self.driver.find_elements(*element_or_selector)
+            return elements[0] if elements else None
+
+        return element_or_selector if isinstance(element_or_selector, WebElement) else None
+
+    @staticmethod
+    def _get_element_dimensions(element):
+        """Returns an element's position and size
+
+        :param WebElement element: Element to get dimensions for
+        :return:
+        """
+
+        if isinstance(element, WebElement):
+
+            # Get dimensions of element
+            location = element.location
+            size = element.size
+
+            return {
+                'top': int(location['y']),
+                'left': int(location['x']),
+                'width': int(size['width']),
+                'height': int(size['height'])
+            }
+
+    def _get_element_rect(self, element):
+        """Returns the two points that define the rectangle
+
+        :param WebElement element: Element to get points for 
+        :return:
+        """
+
+        dimensions = self._get_element_dimensions(element)
+
+        if dimensions:
+
+            return (
+                dimensions['left'],
+                dimensions['top'],
+                (dimensions['left'] + dimensions['width']),
+                (dimensions['top'] + dimensions['height'])
+            )
+
     def set_viewport_size(self, width, height):
         """Readjust viewport to size specified
 
@@ -124,17 +177,17 @@ class NeedleDriver(object):
 
         self.driver.set_window_size(width + delta, height)
 
-    def get_screenshot_as_image(self, element=None):
+    def get_screenshot(self, element=None):
         """Returns screenshot image
 
-        :param element: Crop image to element (Optional)
+        :param WebElement element: Crop image to element (Optional)
         :return:
         """
 
         stream = IOClass(base64.b64decode(self.driver.get_screenshot_as_base64().encode('ascii')))
         image = Image.open(stream).convert('RGB')
 
-        if element:
+        if isinstance(element, WebElement):
 
             window_size = (
                 self.driver.get_window_size()['width'],
@@ -144,64 +197,115 @@ class NeedleDriver(object):
             image_size = image.size
 
             # Get dimensions of element
-            location = element.location
-            size = element.size
-
-            dimensions = {
-                'top': int(location['y']),
-                'left': int(location['x']),
-                'width': int(size['width']),
-                'height': int(size['height'])
-            }
+            dimensions = self._get_element_dimensions(element)
 
             if not image_size == (dimensions['width'], dimensions['height']):
-
-                print image_size
-                print window_size
-                print dimensions
 
                 ratio = max((
                     math.ceil(image_size[0]/float(window_size[0])),
                     math.ceil(image_size[1]/float(window_size[1]))
                 ))
 
-                print ratio
-
-                return image.crop((
-                    dimensions['left'] * ratio,
-                    dimensions['top'] * ratio,
-                    (dimensions['left'] + dimensions['width']) * ratio,
-                    (dimensions['top'] + dimensions['height']) * ratio
-                ))
+                return image.crop([point * ratio for point in self._get_element_rect(element)])
 
         return image
 
-    def assert_screenshot(self, file_path, element_or_selector=None, threshold=0):
+    def get_screenshot_as_image(self, element=None, exclude=None):
+        """
+
+        :param WebElement element: Crop image to element (Optional)
+        :param exclude: 
+        :return:
+        """
+
+        image = self.get_screenshot(element)
+
+        # Mask elements in exclude if element is not included
+        if isinstance(exclude, (list, tuple)) and exclude and not element:
+
+            # Gather all elements to exclude
+            elements = [self._find_element(element) for element in exclude]
+            elements = [element for element in elements if element]
+
+            canvas = ImageDraw.Draw(image)
+
+            window_size = (
+                self.driver.get_window_size()['width'],
+                self.driver.get_window_size()['height']
+            )
+
+            image_size = image.size
+
+            ratio = max((
+                math.ceil(image_size[0] / float(window_size[0])),
+                math.ceil(image_size[1] / float(window_size[1]))
+            ))
+
+            for element in elements:
+                canvas.rectangle([point * ratio for point in self._get_element_rect(element)],
+                                 fill=ImageColor.getrgb('black'))
+
+            del canvas
+
+        return image
+
+    def assert_screenshot(self, file_path, element_or_selector=None, threshold=0, exclude=None):
         """Fail if new fresh image is too dissimilar from the baseline image
 
         .. note:: From needle
             https://github.com/python-needle/needle/blob/master/needle/cases.py#L161
 
         :param str file_path: File name for baseline image
-        :param element_or_selector:
+        :param element_or_selector: WebElement or tuple containing selector ex. ('id', 'mainPage')
         :param threshold: Distance threshold
+        :param list exclude: Elements or element selectors for areas to exclude
         :return:
         """
 
-        if isinstance(element_or_selector, tuple):
+        element = self._find_element(element_or_selector)
 
-            elements = self.driver.find_elements(*element_or_selector)
-            element = elements[0] if elements else None
+        # Get baseline image
+        if isinstance(file_path, basestring):
+
+            baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
+
+            if self.save_baseline:
+
+                # Take screenshot and exit
+                return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
+
+            else:
+
+                if not os.path.exists(baseline_image):
+                    raise IOError('The baseline screenshot %s does not exist. '
+                                  'You might want to re-run this test in baseline-saving mode.'
+                                  % baseline_image)
 
         else:
-            element = element_or_selector if isinstance(element_or_selector, WebElement) else None
-
-        if not isinstance(file_path, basestring):
 
             # Comparing in-memory files instead of on-disk files
             baseline_image = Image.open(file_path).convert('RGB')
 
-            fresh_image = self.get_screenshot_as_image(element)
+        # Get fresh screenshot
+        fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
+
+        # Compare images
+        if isinstance(baseline_image, basestring):
+
+            output_file = os.path.join(self.output_dir, '%s.png' % file_path)
+            fresh_image.save(output_file)
+
+            try:
+                self.engine.assertSameFiles(output_file, baseline_image, threshold)
+
+            except:
+                raise
+
+            finally:
+                if self.cleanup_on_success:
+                    os.remove(output_file)
+
+        else:
 
             diff = ImageDiff(fresh_image, baseline_image)
             distance = abs(diff.get_distance())
@@ -209,33 +313,3 @@ class NeedleDriver(object):
             if distance > threshold:
                 pytest.fail('Fail: New screenshot did not match the '
                             'baseline (by a distance of %.2f)' % distance)
-
-        else:
-
-            baseline_file = os.path.join(self.baseline_dir, '%s.png' % file_path)
-            output_file = os.path.join(self.output_dir, '%s.png' % file_path)
-
-            if self.save_baseline:
-
-                # Take screenshot and exit
-                return self.get_screenshot_as_image(element).save(baseline_file)
-
-            else:
-
-                if not os.path.exists(baseline_file):
-                    raise IOError('The baseline screenshot %s does not exist. '
-                                  'You might want to re-run this test in baseline-saving mode.'
-                                  % baseline_file)
-
-                # Save the new screenshot
-                self.get_screenshot_as_image(element).save(output_file)
-
-                try:
-                    self.engine.assertSameFiles(output_file, baseline_file, threshold)
-
-                except:
-                    raise
-
-                finally:
-                    if self.cleanup_on_success:
-                        os.remove(output_file)
