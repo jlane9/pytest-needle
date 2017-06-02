@@ -153,3 +153,5 @@ ENV/
 
 # Ignore screenshots folder
 screenshots/
+
+publish\.sh
