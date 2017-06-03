@@ -20,7 +20,7 @@ def test_example_page(needle):
     needle.driver.get('https://www.example.com')
 
     # Take a entire page screen diff
-    needle.assert_screenshot('static_page', threshold=60)
+    needle.assert_screenshot('static_page')
 
 
 @pytest.mark.mask
@@ -35,7 +35,8 @@ def test_example_page_with_mask(needle):
     needle.driver.get('https://www.google.com')
 
     # Take a entire page screen diff, ignore the doodle banner
-    needle.assert_screenshot('search_page', threshold=60, exclude=[(By.ID, 'hplogo'), (By.ID, 'prm')])
+    needle.assert_screenshot('search_page', threshold=60,
+                             exclude=[(By.ID, 'hplogo'), (By.ID, 'prm')])
 
 
 @pytest.mark.element

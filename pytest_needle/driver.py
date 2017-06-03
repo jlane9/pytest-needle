@@ -143,7 +143,7 @@ class NeedleDriver(object):
     def _get_element_rect(self, element):
         """Returns the two points that define the rectangle
 
-        :param WebElement element: Element to get points for 
+        :param WebElement element: Element to get points for
         :return:
         """
 
@@ -215,7 +215,7 @@ class NeedleDriver(object):
         """
 
         :param WebElement element: Crop image to element (Optional)
-        :param exclude: 
+        :param list exclude: Elements to exclude
         :return:
         """
 
@@ -242,8 +242,8 @@ class NeedleDriver(object):
                 math.ceil(image_size[1] / float(window_size[1]))
             ))
 
-            for element in elements:
-                canvas.rectangle([point * ratio for point in self._get_element_rect(element)],
+            for ele in elements:
+                canvas.rectangle([point * ratio for point in self._get_element_rect(ele)],
                                  fill=ImageColor.getrgb('black'))
 
             del canvas
