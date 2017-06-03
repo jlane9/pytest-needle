@@ -190,7 +190,11 @@ pytest --driver Chrome --needle-output-dir /path/to/output/images
 Default path is ./screenshots
 
 
-Planed Features
----------------
+Generating HTML reports
+-----------------------
 
-- pytest-html integration, embed images into reports
+To generate html reports use:
+
+```bash
+pytest --driver Chrome --html=report.html --self-contained-html
+```
