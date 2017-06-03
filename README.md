@@ -97,6 +97,41 @@ You may also set the default viewport size for all your tests by using the comma
 pytest --driver Chrome --needle-viewport-size "1024 x 768" test_example.py
 ```
 
+Excluding areas
+---------------
+
+Sometimes areas on a web page may contain dynamic content and cause false negatives, or worse convince testers to raise 
+the threshold at which changes are acceptable. You can instead choose to mask these areas to avoid the issue of consistently
+failing tests:
+
+```python
+"""test_example.py
+"""
+
+from selenium.webdriver.common.by import By
+import pytest
+
+
+@pytest.mark.mask
+def test_example_page_with_mask(needle):
+    """Example for comparing page with a mask
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    # Navigate to web page
+    needle.driver.get('https://www.google.com')
+
+    # Take a entire page screen diff, ignore the doodle banner
+    needle.assert_screenshot('search_page', threshold=60, exclude=[(By.ID, 'hplogo'), (By.ID, 'prm')])
+```
+
+In the case with Google's home page the doodle banner frequently changes, so to visually regress day-to-day requires 
+generating new baselines every time the banner is updated. Masking allows only the banner to be ignored while the rest 
+of the page can be evaluated.
+
+
 Engines
 -------
 
@@ -159,4 +194,3 @@ Planed Features
 ---------------
 
 - pytest-html integration, embed images into reports
-- Element masking (Exclude areas that frequently change)
