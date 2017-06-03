@@ -17,6 +17,21 @@ def test_example_page(needle):
     """
 
     # Navigate to web page
+    needle.driver.get('https://www.example.com')
+
+    # Take a entire page screen diff
+    needle.assert_screenshot('static_page', threshold=60)
+
+
+@pytest.mark.mask
+def test_example_page_with_mask(needle):
+    """Example for comparing page with a mask
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    # Navigate to web page
     needle.driver.get('https://www.google.com')
 
     # Take a entire page screen diff, ignore the doodle banner
