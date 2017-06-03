@@ -15,6 +15,7 @@ from needle.cases import import_from_string
 from needle.engines.pil_engine import ImageDiff
 from PIL import Image, ImageDraw, ImageColor
 from selenium.webdriver.remote.webdriver import WebElement
+from pytest_needle.exceptions import ImageMismatchException
 
 
 if sys.version_info >= (3, 0):
@@ -298,8 +299,8 @@ class NeedleDriver(object):
             try:
                 self.engine.assertSameFiles(output_file, baseline_image, threshold)
 
-            except:
-                raise
+            except AssertionError as err:
+                raise ImageMismatchException(err.message, baseline_image, output_file)
 
             finally:
                 if self.cleanup_on_success:
