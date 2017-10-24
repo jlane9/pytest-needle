@@ -20,7 +20,7 @@ def test_example_page(needle):
     needle.driver.get('https://www.example.com')
 
     # Take a entire page screen diff
-    needle.assert_screenshot('static_page', threshold=10)
+    needle.assert_screenshot('static_page', threshold=80)
 
 
 @pytest.mark.mask
