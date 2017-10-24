@@ -60,21 +60,15 @@ class NeedleDriver(object):
         for directory in (self.baseline_dir, self.output_dir):
             self._create_dir(directory)
 
-        # Determine viewport width and height
         dimensions = kwargs.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
         viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', dimensions)
 
-        if viewport_size:
-            self.viewport_width = int(viewport_size.group('width'))
-            self.viewport_height = int(viewport_size.group('height'))
-
-        else:
-            self.viewport_width = int(DEFAULT_VIEWPORT_SIZE.split('x')[0])
-            self.viewport_height = int(DEFAULT_VIEWPORT_SIZE.split('x')[1])
-
         # Set viewport position, size
         self.driver.set_window_position(0, 0)
-        self.set_viewport_size(self.viewport_width, self.viewport_height)
+        viewport_dimensions = (int(viewport_size.group('width')), int(viewport_size.group('height'))) if viewport_size \
+            else (int(DEFAULT_VIEWPORT_SIZE.split('x')[0]), int(DEFAULT_VIEWPORT_SIZE.split('x')[1]))
+
+        self.driver.set_window_size(*viewport_dimensions)
 
         # Instantiate the diff engine
         engine_config = kwargs.get('needle_engine', 'pil').lower()
@@ -157,26 +151,6 @@ class NeedleDriver(object):
                 (dimensions['left'] + dimensions['width']),
                 (dimensions['top'] + dimensions['height'])
             )
-
-    def set_viewport_size(self, width, height):
-        """Readjust viewport to size specified
-
-        .. note:: From needle
-            https://github.com/python-needle/needle/blob/master/needle/cases.py#L151
-
-        :param int width: Viewport width
-        :param int height: Viewport height
-        :return:
-        """
-
-        self.driver.set_window_size(width, height)
-
-        measured = self.driver.execute_script(
-            "return {width: document.body.clientWidth, height: document.body.clientHeight};")
-
-        delta = width - measured['width']
-
-        self.driver.set_window_size(width + delta, height)
 
     def get_screenshot(self, element=None):
         """Returns screenshot image
