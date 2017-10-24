@@ -19,8 +19,15 @@ from pytest_needle.exceptions import ImageMismatchException
 
 
 if sys.version_info >= (3, 0):
+
     from io import BytesIO as IOClass
+
+    # Ignoring since basetring is not redefined if running on python3
+    # pylint: disable=W0622
+    # pylint: disable=C0103
     basestring = str
+    # pylint: enable=W0622
+    # pylint: enable=C0103
 
 else:
     try:
