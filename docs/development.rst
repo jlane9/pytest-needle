@@ -32,3 +32,19 @@ Or you can use autobuild:
 
     cd docs
     sphinx-autobuild . _build/html/
+
+-------------
+Running Tests
+-------------
+
+To run tests you must first provide a base line to go against:
+
+.. code-block:: bash
+
+    pytest --driver Chrome --needle-save-baseline test/
+
+Then all runs afterwards can be just:
+
+.. code-block:: bash
+
+    pytest --driver Chrome --pep8 pytest_needle --cov pytest_needle --cov-report term-missing test/
