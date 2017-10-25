@@ -1,5 +1,7 @@
 pytest-needle
 =============
+[![Build Status](https://travis-ci.org/jlane9/pytest-needle.svg?branch=master)](https://travis-ci.org/jlane9/pytest-needle)
+[![Coverage Status](https://coveralls.io/repos/github/jlane9/pytest-needle/badge.svg?branch=master)](https://coveralls.io/github/jlane9/pytest-needle?branch=master)
 
 pytest-needle is a pytest implementation of [needle](https://github.com/python-needle/needle).
 
