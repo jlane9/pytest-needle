@@ -26,6 +26,8 @@ pytest-needle
 .. image:: https://requires.io/github/jlane9/pytest-needle/requirements.svg?branch=master
     :target: https://requires.io/github/jlane9/pytest-needle/requirements/?branch=master
 
+.. image:: https://readthedocs.org/projects/pytest-needle/badge/?version=latest
+    :target: http://pytest-needle.readthedocs.io/en/latest/?badge=latest
 
 pytest-needle is a pytest implementation of `needle <https://github.com/python-needle/needle>`_.
 
@@ -58,7 +60,7 @@ Example
 Example needle pytest implementation:
 
 
-.. highlight:: python
+.. code-block:: python
 
     """test_example.py
     """
@@ -108,7 +110,7 @@ Setting the viewport's size
 
 You may set the size of the browser's viewport using the ``set_viewport_size()`` on the needle fixture
 
-.. highlight:: python
+.. code-block:: python
 
     def test_example_viewport(needle):
 
@@ -131,7 +133,7 @@ Sometimes areas on a web page may contain dynamic content and cause false negati
 the threshold at which changes are acceptable. You can instead choose to mask these areas to avoid the issue of consistently
 failing tests:
 
-.. highlight:: python
+.. code-block:: python
 
     """test_example.py
     """
@@ -238,4 +240,4 @@ Special Thanks
 .. image:: http://svgshare.com/i/3ZQ.svg
     :target: https://www.browserstack.com
 
-    Special thanks to BrowserStack for providing automated browser testing, at no charge, for this project and other open source projects like this. With over 1000+ device, browser and os versions combinations to choose from and integrations with Travis CI this project could not be successful without the hard work of the BrowserStack team and their continued support of the open source community.
+Special thanks to BrowserStack for providing automated browser testing, at no charge, for this project and other open source projects like this. With over 1000+ device, browser and os versions combinations to choose from and integrations with Travis CI this project could not be successful without the hard work of the BrowserStack team and their continued support of the open source community.
