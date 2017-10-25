@@ -13,9 +13,6 @@ pytest-needle
 .. image:: https://coveralls.io/repos/github/jlane9/pytest-needle/badge.svg?branch=master
     :target: https://coveralls.io/github/jlane9/pytest-needle?branch=master
 
-.. image:: https://landscape.io/github/jlane9/pytest-needle/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/jlane9/pytest-needle/master
-
 .. image:: https://badge.fury.io/py/pytest-needle.svg
     :target: https://badge.fury.io/py/pytest-needle
 
