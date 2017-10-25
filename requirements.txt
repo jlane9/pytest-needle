@@ -5,4 +5,5 @@ pytest-cov>=2.5.0
 pytest-pep8>=1.0.0
 python-coveralls>=2.9.0
 pytest-selenium>=1.10.0,<2.0.0
+recommonmark>=0.4.0
 selenium>=3.4.0,<4.0.0
