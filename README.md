@@ -1,5 +1,13 @@
 pytest-needle
 =============
+[![Build Status](https://travis-ci.org/jlane9/pytest-needle.svg?branch=master)](https://travis-ci.org/jlane9/pytest-needle)
+[![Coverage Status](https://coveralls.io/repos/github/jlane9/pytest-needle/badge.svg?branch=master)](https://coveralls.io/github/jlane9/pytest-needle?branch=master)
+[![Code Health](https://landscape.io/github/jlane9/pytest-needle/master/landscape.svg?style=flat)](https://landscape.io/github/jlane9/pytest-needle/master)
+[![PyPI version](https://badge.fury.io/py/pytest-needle.svg)](https://badge.fury.io/py/pytest-needle)
+[![Python version](https://img.shields.io/pypi/pyversions/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+[![License](https://img.shields.io/pypi/l/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+[![Status](https://img.shields.io/pypi/status/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+[![Requirements Status](https://requires.io/github/jlane9/pytest-needle/requirements.svg?branch=master)](https://requires.io/github/jlane9/pytest-needle/requirements/?branch=master)
 
 pytest-needle is a pytest implementation of [needle](https://github.com/python-needle/needle).
 
@@ -198,3 +206,10 @@ To generate html reports use:
 ```bash
 pytest --driver Chrome --html=report.html --self-contained-html
 ```
+
+Special Thanks
+--------------
+
+[![browserstack_logo](http://svgshare.com/i/3ZQ.svg)](https://www.browserstack.com)
+
+> Special thanks to BrowserStack for providing automated browser testing, at no charge, for this project and other open source projects like this. With over 1000+ device, browser and os versions combinations to choose from and integrations with Travis CI this project could not be successful without the hard work of the BrowserStack team and their continued support of the open source community.
