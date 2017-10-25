@@ -2,6 +2,14 @@ pytest-needle
 =============
 [![Build Status](https://travis-ci.org/jlane9/pytest-needle.svg?branch=master)](https://travis-ci.org/jlane9/pytest-needle)
 [![Coverage Status](https://coveralls.io/repos/github/jlane9/pytest-needle/badge.svg?branch=master)](https://coveralls.io/github/jlane9/pytest-needle?branch=master)
+[![Code Health](https://landscape.io/github/jlane9/pytest-needle/master/landscape.svg?style=flat)](https://landscape.io/github/jlane9/pytest-needle/master)
+[![PyPI version](https://badge.fury.io/py/pytest-needle.svg)](https://badge.fury.io/py/pytest-needle)
+[![Python version](https://img.shields.io/pypi/pyversions/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+[![License](https://img.shields.io/pypi/l/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+[![Status](https://img.shields.io/pypi/status/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
+
+
+
 
 pytest-needle is a pytest implementation of [needle](https://github.com/python-needle/needle).
 
