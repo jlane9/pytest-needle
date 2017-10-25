@@ -48,6 +48,7 @@ and implements needle as a fixture instead of having test cases inherit from nee
    Getting Started <readme>
    Advanced Settings <advanced>
    API Reference <pytest_needle>
+   Development <development>
    Miscellaneous <misc>
 
 
