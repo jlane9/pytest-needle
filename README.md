@@ -8,6 +8,7 @@ pytest-needle
 [![Status](https://img.shields.io/pypi/status/pytest-needle.svg)](https://pypi.python.org/pypi/pytest-needle)
 [![Requirements Status](https://requires.io/github/jlane9/pytest-needle/requirements.svg?branch=master)](https://requires.io/github/jlane9/pytest-needle/requirements/?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pytest-needle/badge/?version=latest)](http://pytest-needle.readthedocs.io/en/latest/?badge=latest)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a15071d58f78ebe3e6c0/maintainability)](https://codeclimate.com/github/jlane9/pytest-needle/maintainability)
 
 pytest-needle is a pytest implementation of [needle](https://github.com/python-needle/needle).
 

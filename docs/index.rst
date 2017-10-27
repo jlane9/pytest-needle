@@ -31,6 +31,10 @@ pytest-needle
 .. image:: https://readthedocs.org/projects/pytest-needle/badge/?version=latest
     :target: http://pytest-needle.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://api.codeclimate.com/v1/badges/a15071d58f78ebe3e6c0/maintainability
+   :target: https://codeclimate.com/github/jlane9/pytest-needle/maintainability
+
+
 pytest-needle is a pytest implementation of `needle <https://github.com/python-needle/needle>`_.
 
 It's fairly similar to needle and shares much of the same functionality,
