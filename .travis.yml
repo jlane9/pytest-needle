@@ -1,9 +1,4 @@
 language: python
-addons:
-  browserstack:
-    username: "johnlane4"
-    access_key:
-      secure: "gavFdxJhx4U7ZbwBSCLn7oO1rz2bGJgXSUMEMsCbDvwcF4Dd91RoSXrx7kav2Kh00hPqOl9nr6s0/KcQ3vXHF7KJVb7d2iYFQfC058qsUBs6/RkbwgYF4w7Q2+2UP34K7t1OB3XJMfXwwd2NXOQ0bwJoyxRo/VRQBksIj98kWdpgqW251QC/MhuVhh1Sj1YsVURuNx5ZwKcTS/hJiNIGu4fZRxS64Bwad4AvFrxxfXU93xK2HyQASvMjbd0nD2kVIIlixL7HVNDp7eQAll3A5fysT4mM6XXWoL4P9JMuWMTu/DDrVqML6v92BIO5tCYZW+jTduKpvLzQSycKe/OIIjYrFsnIG+I/NK+A2F76E9NKdP9Q4InVmJ+rWPJ3pI6nRPfkrPVkwYrJddcO1RuN+BawPVMawnSqcMLd7crg4PuNe5yRmBPp6HLbOrMn/mTnNg7mGzLXcs2w519cEKW/0XhnO4mvOGYbE5stiWTw4kcnN3n6h19/I4JV5Jl/fRgRQi+HCrTG56vyC24NGb+PwpHCk3zjktiIBidX0AmCy/qfIuWiKp+baGiMCSqjM7TUPdFXw0drddwAbFFKatqsnqtZJjEck2+xXTztc1MmHG5nFU5XgfGbctv90G+X7VjDqSM+9u3gD+06JoZgRrG5K4XY4ULQKPgz+4aMlT1b4IY="
 python:
   - "2.7"
   - "3.6"
