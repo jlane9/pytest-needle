@@ -159,6 +159,19 @@ class NeedleDriver(object):
                 (dimensions['top'] + dimensions['height'])
             )
 
+    @staticmethod
+    def _get_ratio(image_size, window_size):
+
+        return max((
+            math.ceil(image_size[0] / float(window_size[0])),
+            math.ceil(image_size[1] / float(window_size[1]))
+        ))
+
+    def _get_window_size(self):
+
+        window_size = self.driver.get_window_size()
+        return window_size['width'], window_size()['height']
+
     def get_screenshot(self, element=None):
         """Returns screenshot image
 
@@ -171,10 +184,7 @@ class NeedleDriver(object):
 
         if isinstance(element, WebElement):
 
-            window_size = (
-                self.driver.get_window_size()['width'],
-                self.driver.get_window_size()['height']
-            )
+            window_size = self._get_window_size()
 
             image_size = image.size
 
@@ -183,10 +193,7 @@ class NeedleDriver(object):
 
             if not image_size == (dimensions['width'], dimensions['height']):
 
-                ratio = max((
-                    math.ceil(image_size[0]/float(window_size[0])),
-                    math.ceil(image_size[1]/float(window_size[1]))
-                ))
+                ratio = self._get_ratio(image_size, window_size)
 
                 return image.crop([point * ratio for point in self._get_element_rect(element)])
 
@@ -211,17 +218,11 @@ class NeedleDriver(object):
 
             canvas = ImageDraw.Draw(image)
 
-            window_size = (
-                self.driver.get_window_size()['width'],
-                self.driver.get_window_size()['height']
-            )
+            window_size = self._get_window_size()
 
             image_size = image.size
 
-            ratio = max((
-                math.ceil(image_size[0] / float(window_size[0])),
-                math.ceil(image_size[1] / float(window_size[1]))
-            ))
+            ratio = self._get_ratio(image_size, window_size)
 
             for ele in elements:
                 canvas.rectangle([point * ratio for point in self._get_element_rect(ele)],
