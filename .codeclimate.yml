@@ -1,0 +1,23 @@
+version: "2"
+
+engines:
+  pep8:
+    enabled: true
+
+ratings:
+   paths:
+   - "**.py"
+
+checks:
+  argument-count:
+    config:
+      threshold: 5
+  file-lines:
+    config:
+      threshold: 1000
+  method-count:
+    config:
+      threshold: 30
+  method-lines:
+    config:
+      threshold: 50
