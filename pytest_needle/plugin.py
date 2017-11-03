@@ -56,37 +56,36 @@ def pytest_runtest_makereport(item, call):
     report = outcome.get_result()
     report.extra = getattr(report, 'extra', [])
 
-    if is_failure(report) and call.excinfo:
+    # If the test passed, return
+    if not (is_failure(report) and call.excinfo):
+        return
 
-        exception = call.excinfo.value
+    exception = call.excinfo.value
 
-        if isinstance(exception, ImageMismatchException):
+    # Only capture screenshots if they did not match
+    if not isinstance(exception, ImageMismatchException):
+        return
 
-            pytest_html = item.config.pluginmanager.getplugin('html')
+    pytest_html = item.config.pluginmanager.getplugin('html')
 
-            if pytest_html is not None:
+    # If pytest-html plugin is not available, return
+    if pytest_html is None:
+        return
 
-                if os.path.exists(exception.baseline_image):
+    attachments = (
+        (exception.baseline_image, 'PDIFF: Expected'),
+        (exception.output_image.replace('.png', '.diff.png'), 'PDIFF: Comparison'),
+        (exception.output_image, 'PDIFF: Actual')
+    )
 
-                    report.extra.append(pytest_html.extras.image(
-                        get_image_as_base64(exception.baseline_image),
-                        'PDIFF: Expected'
-                    ))
+    for attachment in attachments:
 
-                diff_path = exception.output_image.replace('.png', '.diff.png')
+        if os.path.exists(attachment):
 
-                if os.path.exists(diff_path):
-                    report.extra.append(pytest_html.extras.image(
-                        get_image_as_base64(diff_path),
-                        'PDIFF: Comparison'
-                    ))
-
-                if os.path.exists(exception.output_image):
-
-                    report.extra.append(pytest_html.extras.image(
-                        get_image_as_base64(exception.output_image),
-                        'PDIFF: Actual'
-                    ))
+            report.extra.append(pytest_html.extras.image(
+                get_image_as_base64(attachment[0]),
+                attachment[1]
+            ))
 
 
 def is_failure(report):

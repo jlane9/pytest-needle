@@ -118,7 +118,8 @@ class NeedleDriver(object):
             elements = self.driver.find_elements(*element_or_selector)
             return elements[0] if elements else None
 
-        return element_or_selector if isinstance(element_or_selector, WebElement) else None
+        elif isinstance(element_or_selector, WebElement):
+            return element_or_selector
 
     @staticmethod
     def _get_element_dimensions(element):
