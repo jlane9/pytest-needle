@@ -151,6 +151,4 @@ ENV/
 # Ignore screenshots folder
 screenshots/
 
-publish\.sh
-
 .DS_Store
