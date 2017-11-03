@@ -80,7 +80,7 @@ def pytest_runtest_makereport(item, call):
 
     for attachment in attachments:
 
-        if os.path.exists(attachment):
+        if os.path.exists(attachment[0]):
 
             report.extra.append(pytest_html.extras.image(
                 get_image_as_base64(attachment[0]),

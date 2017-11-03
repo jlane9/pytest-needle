@@ -171,7 +171,7 @@ class NeedleDriver(object):
     def _get_window_size(self):
 
         window_size = self.driver.get_window_size()
-        return window_size['width'], window_size()['height']
+        return window_size['width'], window_size['height']
 
     def get_screenshot(self, element=None):
         """Returns screenshot image
