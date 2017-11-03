@@ -163,6 +163,3 @@ texinfo_documents = [
      author, 'pytest-needle', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

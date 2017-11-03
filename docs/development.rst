@@ -10,7 +10,7 @@ To install for development, simply run the following commands:
 
 .. code-block:: bash
 
-    git clone https://github.com/jlane9/pytest-needle
+    git clone https://github.com/jlane9/pytest-needle.git
     cd pyest-needle
     pip install -r requirements.txt
     pip install -e .
