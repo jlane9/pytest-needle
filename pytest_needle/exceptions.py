@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """exceptions
 
 .. codeauthor: John Lane <jlane@fanthreesixty.com>

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """pytest_needle.driver
 
 .. codeauthor:: John Lane <jlane@fanthreesixty.com>
