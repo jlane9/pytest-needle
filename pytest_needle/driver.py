@@ -3,6 +3,7 @@
 """pytest_needle.driver
 
 .. codeauthor:: John Lane <jlane@fanthreesixty.com>
+.. codeauthor:: Kevin Möellering
 
 """
 
