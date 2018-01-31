@@ -63,7 +63,8 @@ class NeedleDriver(object):
         self.save_baseline = kwargs.get('save_baseline', False)
         self.cleanup_on_success = kwargs.get('cleanup_on_success', False)
 
-        self.baseline_dir = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
+        self.baseline_root = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
+        self.baseline_dir = os.path.join(self.baseline_root, kwargs.get('browser', 'default').lower())
         self.output_dir = kwargs.get('output_dir', DEFAULT_OUTPUT_DIR)
 
         # Create the output and baseline directories if they do not yet exist.

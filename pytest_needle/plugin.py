@@ -127,7 +127,8 @@ def needle(request, selenium):
         'needle_engine': request.config.getoption('needle_engine'),
         'baseline_dir': request.config.getoption('baseline_dir'),
         'output_dir': request.config.getoption('output_dir'),
-        'viewport_size': request.config.getoption('viewport_size')
+        'viewport_size': request.config.getoption('viewport_size'),
+        'browser': request.config.getoption('driver')
     }
 
     return NeedleDriver(selenium, **options)
