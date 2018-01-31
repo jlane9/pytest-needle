@@ -62,6 +62,7 @@ class NeedleDriver(object):
 
         self.save_baseline = kwargs.get('save_baseline', False)
         self.cleanup_on_success = kwargs.get('cleanup_on_success', False)
+        self.build = kwargs.get('build_name', 'default')
 
         self.baseline_root = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
         self.baseline_browser_dir = os.path.join(self.baseline_root, kwargs.get('browser', 'default').lower())
@@ -164,6 +165,16 @@ class NeedleDriver(object):
                 (dimensions['left'] + dimensions['width']),
                 (dimensions['top'] + dimensions['height'])
             )
+
+    def _get_latest_baseline(self):
+        """Return last baseline taken
+
+        :return:
+        """
+
+        builds = [os.path.join(self.baseline_dir, d) for d in os.listdir(self.baseline_dir)
+                  if os.path.isdir(os.path.join(self.baseline_dir, d))]
+        return max(builds, key=os.path.getmtime) if builds else None
 
     @staticmethod
     def _get_ratio(image_size, window_size):
@@ -268,7 +279,11 @@ class NeedleDriver(object):
         # Get baseline image
         if isinstance(file_path, basestring):
 
-            baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
+            build_path = os.path.join(self.baseline_dir, self.build) \
+                if self.save_baseline else self._get_latest_baseline()
+            self._create_dir(build_path)
+
+            baseline_image = os.path.join(build_path, '%s.png' % file_path)
 
             if self.save_baseline:
 

@@ -8,6 +8,7 @@
 
 from __future__ import absolute_import
 import base64
+from datetime import datetime
 import os
 import pytest
 from pytest_needle.driver import DEFAULT_BASELINE_DIR, DEFAULT_OUTPUT_DIR, DEFAULT_ENGINE, \
@@ -43,6 +44,10 @@ def pytest_addoption(parser):
     group.addoption('--needle-viewport-size', action='store', dest='viewport_size',
                     metavar='pixels', default=DEFAULT_VIEWPORT_SIZE,
                     help='size of window width (px) x height (px)')
+
+    group.addoption('--needle-build-name', action='store', dest='build_name',
+                    metavar='name', default=datetime.now().strftime('build_%Y.%m.%dT%H.%M.%S'),
+                    help='specify name to give test run')
 
 
 @pytest.mark.hookwrapper
@@ -128,7 +133,8 @@ def needle(request, selenium):
         'baseline_dir': request.config.getoption('baseline_dir'),
         'output_dir': request.config.getoption('output_dir'),
         'viewport_size': request.config.getoption('viewport_size'),
-        'browser': request.config.getoption('driver')
+        'browser': request.config.getoption('driver'),
+        'build_name': request.config.getoption('build_name')
     }
 
     return NeedleDriver(selenium, **options)
