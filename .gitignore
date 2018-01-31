@@ -152,3 +152,8 @@ ENV/
 screenshots/
 
 .DS_Store
+
+# Pytest related files
+assets/
+report.html
+\.pytest_cache/
