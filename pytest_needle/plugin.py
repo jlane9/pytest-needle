@@ -16,7 +16,7 @@ from pytest_needle.exceptions import ImageMismatchException
 
 
 def pytest_addoption(parser):
-    """
+    """Add command-line options to pytest runner
 
     :param parser:
     :return:

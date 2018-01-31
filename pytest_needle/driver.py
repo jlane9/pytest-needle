@@ -165,6 +165,13 @@ class NeedleDriver(object):
 
     @staticmethod
     def _get_ratio(image_size, window_size):
+        """Return scaling ration between image and current window
+
+        :param tuple image_size: Image size (w,h)
+        :param tuple window_size: Window size (w,h)
+        :return:
+        :rtype: float
+        """
 
         return max((
             math.ceil(image_size[0] / float(window_size[0])),
@@ -172,6 +179,11 @@ class NeedleDriver(object):
         ))
 
     def _get_window_size(self):
+        """Return current size of window (w,h)
+
+        :return: Window size (w,h)
+        :rtype: tuple
+        """
 
         window_size = self.driver.get_window_size()
         return window_size['width'], window_size['height']
