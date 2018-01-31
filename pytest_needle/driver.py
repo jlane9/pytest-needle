@@ -283,7 +283,12 @@ class NeedleDriver(object):
                 self.engine.assertSameFiles(output_file, baseline_image, threshold)
 
             except AssertionError as err:
-                raise ImageMismatchException(err.message, baseline_image, output_file)
+                msg = err.message \
+                    if hasattr(err, "message") \
+                    else err.args[0] if err.args else ""
+                args = err.args[1:] if len(err.args) > 1 else []
+                raise ImageMismatchException(
+                    msg, baseline_image, output_file, args)
 
             finally:
                 if self.cleanup_on_success:
