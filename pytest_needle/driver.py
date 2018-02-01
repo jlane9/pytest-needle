@@ -248,11 +248,14 @@ class NeedleDriver(object):
 
         element = self._find_element(element_or_selector)
 
+        # Get fresh screenshot
+        fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
+        fresh_image_file = os.path.join(self.output_dir, '%s.png' % file_path)
+        fresh_image.save(fresh_image_file)
+
         # Get baseline image
         if isinstance(file_path, basestring):
-
             baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
-
             if self.save_baseline:
 
                 # Take screenshot and exit
@@ -264,23 +267,14 @@ class NeedleDriver(object):
                     raise IOError('The baseline screenshot %s does not exist. '
                                   'You might want to re-run this test in baseline-saving mode.'
                                   % baseline_image)
-
         else:
-
             # Comparing in-memory files instead of on-disk files
             baseline_image = Image.open(file_path).convert('RGB')
 
-        # Get fresh screenshot
-        fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
-
         # Compare images
         if isinstance(baseline_image, basestring):
-
-            output_file = os.path.join(self.output_dir, '%s.png' % file_path)
-            fresh_image.save(output_file)
-
             try:
-                self.engine.assertSameFiles(output_file, baseline_image, threshold)
+                self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
 
             except AssertionError as err:
                 msg = err.message \
@@ -288,11 +282,11 @@ class NeedleDriver(object):
                     else err.args[0] if err.args else ""
                 args = err.args[1:] if len(err.args) > 1 else []
                 raise ImageMismatchException(
-                    msg, baseline_image, output_file, args)
+                    msg, baseline_image, fresh_image_file, args)
 
             finally:
                 if self.cleanup_on_success:
-                    os.remove(output_file)
+                    os.remove(fresh_image_file)
 
         else:
 
