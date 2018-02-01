@@ -34,6 +34,7 @@ then
 
     # Release new version
     git push --tags origin master
+    rm dist/pytest*
     python setup.py sdist bdist_wheel
     twine upload dist/*
     RELEASED=$?
