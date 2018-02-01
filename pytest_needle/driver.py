@@ -40,7 +40,7 @@ else:
 
 
 DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'baseline'))
-DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots'))
+DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'runs'))
 DEFAULT_ENGINE = 'needle.engines.pil_engine.Engine'
 DEFAULT_VIEWPORT_SIZE = '1024x768'
 
@@ -60,21 +60,23 @@ class NeedleDriver(object):
         self.options = kwargs
         self.driver = driver
 
-        self.save_baseline = kwargs.get('save_baseline', False)
-        self.cleanup_on_success = kwargs.get('cleanup_on_success', False)
-        self.build = kwargs.get('build_name', 'default')
+        self.save_baseline = kwargs.get('needle_save_baseline', False)
+        self.cleanup_on_success = kwargs.get('needle_cleanup_on_success', False)
+        self.browser = kwargs.get('browser', 'default').lower()
+        self.viewport_size = kwargs.get('needle_viewport_size', DEFAULT_VIEWPORT_SIZE)
+        self.build = kwargs.get('needle_build_name', 'default')
 
-        self.baseline_root = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
-        self.baseline_browser_dir = os.path.join(self.baseline_root, kwargs.get('browser', 'default').lower())
-        self.baseline_dir = os.path.join(self.baseline_browser_dir, kwargs.get('viewport_size', 'default'))
-        self.output_dir = kwargs.get('output_dir', DEFAULT_OUTPUT_DIR)
+        self.baseline_root = kwargs.get('needle_baseline_dir', DEFAULT_BASELINE_DIR)
+        self.baseline_dir = os.path.join(self.baseline_root, self.browser, self.viewport_size)
+
+        self.output_root = kwargs.get('needle_output_dir', DEFAULT_OUTPUT_DIR)
+        self.output_dir = os.path.join(self.output_root, self.browser, self.viewport_size)
 
         # Create the output and baseline directories if they do not yet exist.
         for directory in (self.baseline_dir, self.output_dir):
             self._create_dir(directory)
 
-        dimensions = kwargs.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
-        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', dimensions)
+        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
 
         # Set viewport position, size
         self.driver.set_window_position(0, 0)
@@ -308,7 +310,9 @@ class NeedleDriver(object):
         # Compare images
         if isinstance(baseline_image, basestring):
 
-            output_file = os.path.join(self.output_dir, '%s.png' % file_path)
+            output_path = os.path.join(self.output_dir, self.build)
+            self._create_dir(output_path)
+            output_file = os.path.join(output_path, '%s.png' % file_path)
             fresh_image.save(output_file)
 
             try:

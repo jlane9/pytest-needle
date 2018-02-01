@@ -33,19 +33,19 @@ def pytest_addoption(parser):
     group.addoption('--needle-engine', action='store', dest='needle_engine', metavar='engine',
                     default=DEFAULT_ENGINE, help='engine for compare screenshots')
 
-    group.addoption('--needle-baseline-dir', action='store', dest='baseline_dir',
+    group.addoption('--needle-baseline-dir', action='store', dest='needle_baseline_dir',
                     metavar='dir', default=DEFAULT_BASELINE_DIR,
                     help='where to store baseline images')
 
-    group.addoption('--needle-output-dir', action='store', dest='output_dir',
+    group.addoption('--needle-output-dir', action='store', dest='needle_output_dir',
                     metavar='dir', default=DEFAULT_OUTPUT_DIR,
                     help='where to store baseline images')
 
-    group.addoption('--needle-viewport-size', action='store', dest='viewport_size',
+    group.addoption('--needle-viewport-size', action='store', dest='needle_viewport_size',
                     metavar='pixels', default=DEFAULT_VIEWPORT_SIZE,
                     help='size of window width (px) x height (px)')
 
-    group.addoption('--needle-build-name', action='store', dest='build_name',
+    group.addoption('--needle-build-name', action='store', dest='needle_build_name',
                     metavar='name', default=datetime.now().strftime('build_%Y.%m.%dT%H.%M.%S'),
                     help='specify name to give test run')
 
@@ -126,15 +126,9 @@ def needle(request, selenium):
     :return:
     """
 
-    options = {
-        'cleanup_on_success': request.config.getoption('needle_cleanup_on_success'),
-        'save_baseline': request.config.getoption('needle_save_baseline'),
-        'needle_engine': request.config.getoption('needle_engine'),
-        'baseline_dir': request.config.getoption('baseline_dir'),
-        'output_dir': request.config.getoption('output_dir'),
-        'viewport_size': request.config.getoption('viewport_size'),
-        'browser': request.config.getoption('driver'),
-        'build_name': request.config.getoption('build_name')
-    }
+    needle_args = ('needle_cleanup_on_success', 'needle_save_baseline', 'needle_engine', 'needle_baseline_dir',
+                   'needle_output_dir', 'needle_viewport_size', 'needle_build_name')
+    options = dict((key, request.config.getoption(key)) for key in needle_args)
+    options['browser'] = request.config.getoption('driver')
 
     return NeedleDriver(selenium, **options)
