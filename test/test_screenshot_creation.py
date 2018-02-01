@@ -10,7 +10,7 @@ import os
 
 
 def test_screenshot(needle):
-    
+
     SCREENSHOT_NAME = 'screenshot_without_baseline'
     needle.driver.get('https://www.example.com')
     screenshot_dir = os.path.join(needle.output_dir, needle.build) if needle.categorize else needle.output_dir
