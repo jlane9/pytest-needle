@@ -62,15 +62,18 @@ class NeedleDriver(object):
 
         self.save_baseline = kwargs.get('needle_save_baseline', False)
         self.cleanup_on_success = kwargs.get('needle_cleanup_on_success', False)
+        self.categorize = kwargs.get('needle_categorize', False)
         self.browser = kwargs.get('browser', 'default').lower()
         self.viewport_size = kwargs.get('needle_viewport_size', DEFAULT_VIEWPORT_SIZE)
         self.build = kwargs.get('needle_build_name', 'default')
 
         self.baseline_root = kwargs.get('needle_baseline_dir', DEFAULT_BASELINE_DIR)
-        self.baseline_dir = os.path.join(self.baseline_root, self.browser, self.viewport_size)
+        self.baseline_dir = os.path.join(self.baseline_root, self.browser, self.viewport_size) \
+            if self.categorize else self.baseline_root
 
         self.output_root = kwargs.get('needle_output_dir', DEFAULT_OUTPUT_DIR)
-        self.output_dir = os.path.join(self.output_root, self.browser, self.viewport_size)
+        self.output_dir = os.path.join(self.output_root, self.browser, self.viewport_size) \
+            if self.categorize else self.output_root
 
         # Create the output and baseline directories if they do not yet exist.
         for directory in (self.baseline_dir, self.output_dir):
@@ -281,8 +284,13 @@ class NeedleDriver(object):
         # Get baseline image
         if isinstance(file_path, basestring):
 
-            build_path = os.path.join(self.baseline_dir, self.build) \
-                if self.save_baseline else self._get_latest_baseline()
+            if self.categorize:
+                build_path = os.path.join(self.baseline_dir, self.build) \
+                    if self.save_baseline else self._get_latest_baseline()
+
+            else:
+                build_path = self.baseline_dir
+
             self._create_dir(build_path)
 
             baseline_image = os.path.join(build_path, '%s.png' % file_path)
@@ -310,7 +318,7 @@ class NeedleDriver(object):
         # Compare images
         if isinstance(baseline_image, basestring):
 
-            output_path = os.path.join(self.output_dir, self.build)
+            output_path = os.path.join(self.output_dir, self.build) if self.categorize else self.output_dir
             self._create_dir(output_path)
             output_file = os.path.join(output_path, '%s.png' % file_path)
             fresh_image.save(output_file)

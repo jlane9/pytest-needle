@@ -30,6 +30,9 @@ def pytest_addoption(parser):
     group.addoption('--needle-save-baseline', action='store_true',
                     help='save baseline screenshots to disk')
 
+    group.addoption('--needle-categorize', action='store_true',
+                    help='structure baseline and runs by browser, viewport and run')
+
     group.addoption('--needle-engine', action='store', dest='needle_engine', metavar='engine',
                     default=DEFAULT_ENGINE, help='engine for compare screenshots')
 
@@ -47,7 +50,7 @@ def pytest_addoption(parser):
 
     group.addoption('--needle-build-name', action='store', dest='needle_build_name',
                     metavar='name', default=datetime.now().strftime('build_%Y.%m.%dT%H.%M.%S'),
-                    help='specify name to give test run')
+                    help='specify name to give test run, can only be used with --needle-categorize')
 
 
 @pytest.mark.hookwrapper
@@ -127,7 +130,7 @@ def needle(request, selenium):
     """
 
     needle_args = ('needle_cleanup_on_success', 'needle_save_baseline', 'needle_engine', 'needle_baseline_dir',
-                   'needle_output_dir', 'needle_viewport_size', 'needle_build_name')
+                   'needle_output_dir', 'needle_viewport_size', 'needle_build_name', 'needle_categorize')
     options = dict((key, request.config.getoption(key)) for key in needle_args)
     options['browser'] = request.config.getoption('driver')
 
