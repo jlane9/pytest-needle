@@ -248,6 +248,11 @@ class NeedleDriver(object):
 
         element = self._find_element(element_or_selector)
 
+        # Get fresh screenshot
+        fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
+        fresh_image_file = os.path.join(self.output_dir, '%s.png' % file_path)
+        fresh_image.save(fresh_image_file)
+
         # Get baseline image
         if isinstance(file_path, basestring):
             baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
@@ -262,21 +267,12 @@ class NeedleDriver(object):
                     raise IOError('The baseline screenshot %s does not exist. '
                                   'You might want to re-run this test in baseline-saving mode.'
                                   % baseline_image)
-
         else:
-
             # Comparing in-memory files instead of on-disk files
             baseline_image = Image.open(file_path).convert('RGB')
 
-        # Get fresh screenshot
-        fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
-
         # Compare images
         if isinstance(baseline_image, basestring):
-
-            fresh_image_file = os.path.join(self.output_dir, '%s.png' % file_path)
-            fresh_image.save(fresh_image_file)
-
             try:
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
 
