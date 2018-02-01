@@ -40,7 +40,7 @@ else:
 
 
 DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'baseline'))
-DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'runs'))
+DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots'))
 DEFAULT_ENGINE = 'needle.engines.pil_engine.Engine'
 DEFAULT_VIEWPORT_SIZE = '1024x768'
 
