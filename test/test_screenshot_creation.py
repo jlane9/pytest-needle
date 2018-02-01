@@ -9,7 +9,12 @@
 import os
 
 
-def test_screenshot(needle):
+def test_screenshot_creation(needle):
+    """Verify that screenshots are generated, regardless if error'd
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
 
     SCREENSHOT_NAME = 'screenshot_without_baseline'
     needle.driver.get('https://www.example.com')
