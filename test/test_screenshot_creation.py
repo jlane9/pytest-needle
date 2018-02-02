@@ -1,13 +1,27 @@
+"""test_screenshot_creation
+"""
+
 import os
+import pytest
 
 
-def test_screenshot(needle):
-    SCREENSHOT_NAME = 'screenshot_without_baseline'
+def test_screenshot_creation(needle):
+    """Verify that fresh images are generated regardless if there are baselines
+
+    :param needle:
+    :return:
+    """
+
+    if needle.save_baseline:
+        pytest.skip('Only run screenshot creation for non-baseline runs')
+
+    screenshot_name = 'screenshot_without_baseline'
+    screenshot_path = os.path.join(needle.output_dir, screenshot_name+".png")
     needle.driver.get('https://www.example.com')
+
     try:
-        needle.assert_screenshot(SCREENSHOT_NAME)
-    except IOError as er:
+        needle.assert_screenshot(screenshot_name)
+    except IOError:
         pass
-    assert os.path.isfile(
-        os.path.join(needle.options['output_dir'], SCREENSHOT_NAME+".png")), \
-        "Fresh screenshot was not created (there is no baseline image)"
+
+    assert os.path.isfile(screenshot_path), "Fresh screenshot was not created (there is no baseline image)"
