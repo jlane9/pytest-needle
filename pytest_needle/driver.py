@@ -315,15 +315,16 @@ class NeedleDriver(object):
             baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
             if self.save_baseline:
 
+                if self.cleanup_on_success:
+                    os.remove(fresh_image_file)
+
                 # Take screenshot and exit
                 return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
 
-            else:
+            if not self.save_baseline and not os.path.exists(baseline_image):
+                raise IOError('The baseline screenshot %s does not exist. You might want to '
+                              're-run this test in baseline-saving mode.' % baseline_image)
 
-                if not os.path.exists(baseline_image):
-                    raise IOError('The baseline screenshot %s does not exist. '
-                                  'You might want to re-run this test in baseline-saving mode.'
-                                  % baseline_image)
         else:
             # Comparing in-memory files instead of on-disk files
             baseline_image = Image.open(file_path).convert('RGB')
