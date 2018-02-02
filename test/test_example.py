@@ -133,4 +133,3 @@ def test_baseline_dir(needle):
     needle.assert_screenshot('baseline_dir_test', threshold=80)
 
     assert os.path.exists(screenshot_path)
-
