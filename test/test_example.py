@@ -4,6 +4,7 @@
 
 """
 
+import os
 import pytest
 from selenium.webdriver.common.by import By
 
@@ -63,3 +64,26 @@ def test_example_element(needle):
 
     # Take an element screen diff
     needle.assert_screenshot('search_field', (By.ID, 'tsf'), threshold=80)
+
+
+@pytest.mark.cleanup
+def test_cleanup_on_success(needle):
+    """Verify that the --needle-cleanup-on-success removes the newly generated file
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    screenshot_path = os.path.join(needle.output_dir, "cleanup_test.png")
+
+    # Set cleanup on success to true
+    needle.cleanup_on_success = True
+
+    # Navigate to web page
+    needle.driver.get('https://www.example.com')
+
+    # Take a entire page screen diff
+    needle.assert_screenshot('cleanup_test', threshold=80)
+
+    assert not os.path.exists(screenshot_path)
+
