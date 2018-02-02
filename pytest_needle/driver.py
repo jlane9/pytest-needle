@@ -57,18 +57,11 @@ class NeedleDriver(object):
         self.options = kwargs
         self.driver = driver
 
-        self.save_baseline = kwargs.get('save_baseline', False)
-        self.cleanup_on_success = kwargs.get('cleanup_on_success', False)
-
-        self.baseline_dir = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
-        self.output_dir = kwargs.get('output_dir', DEFAULT_OUTPUT_DIR)
-
         # Create the output and baseline directories if they do not yet exist.
         for directory in (self.baseline_dir, self.output_dir):
             self._create_dir(directory)
 
-        dimensions = kwargs.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
-        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', dimensions)
+        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
 
         # Set viewport position, size
         self.driver.set_window_position(0, 0)
@@ -76,13 +69,6 @@ class NeedleDriver(object):
             else (int(DEFAULT_VIEWPORT_SIZE.split('x')[0]), int(DEFAULT_VIEWPORT_SIZE.split('x')[1]))
 
         self.driver.set_window_size(*viewport_dimensions)
-
-        # Instantiate the diff engine
-        engine_config = kwargs.get('needle_engine', 'pil').lower()
-        self.engine_class = self.ENGINES.get(engine_config, DEFAULT_ENGINE)
-
-        klass = import_from_string(self.engine_class)
-        self.engine = klass()
 
     @staticmethod
     def _create_dir(directory):
@@ -172,6 +158,77 @@ class NeedleDriver(object):
 
         window_size = self.driver.get_window_size()
         return window_size['width'], window_size['height']
+
+    @property
+    def baseline_dir(self):
+        """Return baseline image path
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('baseline_dir', DEFAULT_BASELINE_DIR)
+
+    @baseline_dir.setter
+    def baseline_dir(self, value):
+        """Set baseline image directory
+
+        :param str value: File path
+        :return:
+        """
+
+        assert isinstance(value, basestring)
+        self.options['baseline_dir'] = value
+
+    @property
+    def cleanup_on_success(self):
+        """Returns True, if cleanup on success flag is set
+
+        :return:
+        :rtype: bool
+        """
+
+        return self.options.get('cleanup_on_success', False)
+
+    @cleanup_on_success.setter
+    def cleanup_on_success(self, value):
+        """Set cleanup on success flag
+
+        :param bool value: Cleanup on success flag
+        :return:
+        """
+
+        self.options['cleanup_on_success'] = bool(value)
+
+    @property
+    def engine(self):
+        """Return image processing engine
+
+        :return:
+        """
+
+        return import_from_string(self.engine_class)()
+
+    @property
+    def engine_class(self):
+        """Return image processing engine name
+
+        :return:
+        :rtype: str
+        """
+
+        return self.ENGINES.get(self.options.get('needle_engine', 'pil').lower(), DEFAULT_ENGINE)
+
+    @engine_class.setter
+    def engine_class(self, value):
+        """Set image processing engine name
+
+        :param str value: Image processing engine name (pil, imagemagick, perceptualdiff)
+        :return:
+        """
+
+        assert value.lower() in self.ENGINES
+        self.options['needle_engine'] = value.lower()
 
     def get_screenshot(self, element=None):
         """Returns screenshot image
@@ -296,3 +353,67 @@ class NeedleDriver(object):
             if distance > threshold:
                 pytest.fail('Fail: New screenshot did not match the '
                             'baseline (by a distance of %.2f)' % distance)
+
+    @property
+    def output_dir(self):
+        """Return output image path
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('output_dir', DEFAULT_OUTPUT_DIR)
+
+    @output_dir.setter
+    def output_dir(self, value):
+        """Set output image directory
+
+        :param str value: File path
+        :return:
+        """
+
+        assert isinstance(value, basestring)
+        self.options['output_dir'] = value
+
+    @property
+    def save_baseline(self):
+        """Returns True, if save baseline flag is set
+
+        :return:
+        :rtype: bool
+        """
+
+        foo = self.options.get('save_baseline', False)
+        return foo
+
+    @save_baseline.setter
+    def save_baseline(self, value):
+        """Set save baseline flag
+
+        :param bool value: Save baseline flag
+        :return:
+        """
+
+        self.options['save_baseline'] = bool(value)
+
+    @property
+    def viewport_size(self):
+        """Return setting for browser window size
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
+
+    @viewport_size.setter
+    def viewport_size(self, value):
+        """Set setting for browser window size
+
+        :param value: Browser window size, as string or (x,y)
+        :return:
+        """
+
+        assert isinstance(value, basestring) or \
+               (isinstance(value, (list, tuple)) and len(value) == 2 and all([isinstance(i, int) for i in value]))
+        self.options['viewport_size'] = value if isinstance(value, basestring) else '{}x{}'.format(*value)
