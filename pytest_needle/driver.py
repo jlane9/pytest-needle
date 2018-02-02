@@ -57,10 +57,6 @@ class NeedleDriver(object):
         self.options = kwargs
         self.driver = driver
 
-        # Create the output and baseline directories if they do not yet exist.
-        for directory in (self.baseline_dir, self.output_dir):
-            self._create_dir(directory)
-
         viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
 
         # Set viewport position, size
@@ -305,29 +301,25 @@ class NeedleDriver(object):
 
         element = self._find_element(element_or_selector)
 
+        # Get baseline screenshot
+        self._create_dir(self.baseline_dir)
+        baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path) \
+            if isinstance(file_path, basestring) else Image.open(file_path).convert('RGB')
+
+        # Take screenshot and exit if in baseline saving mode
+        if self.save_baseline:
+            return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
+
         # Get fresh screenshot
+        self._create_dir(self.output_dir)
         fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
         fresh_image_file = os.path.join(self.output_dir, '%s.png' % file_path)
         fresh_image.save(fresh_image_file)
 
-        # Get baseline image
-        if isinstance(file_path, basestring):
-            baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
-            if self.save_baseline:
-
-                if self.cleanup_on_success:
-                    os.remove(fresh_image_file)
-
-                # Take screenshot and exit
-                return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
-
-            if not self.save_baseline and not os.path.exists(baseline_image):
-                raise IOError('The baseline screenshot %s does not exist. You might want to '
-                              're-run this test in baseline-saving mode.' % baseline_image)
-
-        else:
-            # Comparing in-memory files instead of on-disk files
-            baseline_image = Image.open(file_path).convert('RGB')
+        # Error if there is not a baseline image to compare
+        if not self.save_baseline and not isinstance(file_path, basestring) and not os.path.exists(baseline_image):
+            raise IOError('The baseline screenshot %s does not exist. You might want to '
+                          're-run this test in baseline-saving mode.' % baseline_image)
 
         # Compare images
         if isinstance(baseline_image, basestring):
@@ -335,12 +327,9 @@ class NeedleDriver(object):
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
 
             except AssertionError as err:
-                msg = err.message \
-                    if hasattr(err, "message") \
-                    else err.args[0] if err.args else ""
+                msg = err.message if hasattr(err, "message") else err.args[0] if err.args else ""
                 args = err.args[1:] if len(err.args) > 1 else []
-                raise ImageMismatchException(
-                    msg, baseline_image, fresh_image_file, args)
+                raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
 
             finally:
                 if self.cleanup_on_success:
@@ -352,8 +341,7 @@ class NeedleDriver(object):
             distance = abs(diff.get_distance())
 
             if distance > threshold:
-                pytest.fail('Fail: New screenshot did not match the '
-                            'baseline (by a distance of %.2f)' % distance)
+                pytest.fail('Fail: New screenshot did not match the baseline (by a distance of %.2f)' % distance)
 
     @property
     def output_dir(self):
