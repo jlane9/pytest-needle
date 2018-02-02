@@ -384,8 +384,7 @@ class NeedleDriver(object):
         :rtype: bool
         """
 
-        foo = self.options.get('save_baseline', False)
-        return foo
+        return self.options.get('save_baseline', False)
 
     @save_baseline.setter
     def save_baseline(self, value):
@@ -415,6 +414,7 @@ class NeedleDriver(object):
         :return:
         """
 
-        assert isinstance(value, basestring) or \
-               (isinstance(value, (list, tuple)) and len(value) == 2 and all([isinstance(i, int) for i in value]))
+        assert isinstance(value, (basestring, list, tuple))
+        assert len(value) == 2 and all([isinstance(i, int) for i in value]) \
+            if isinstance(value, (list, tuple)) else True
         self.options['viewport_size'] = value if isinstance(value, basestring) else '{}x{}'.format(*value)

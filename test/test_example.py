@@ -86,4 +86,3 @@ def test_cleanup_on_success(needle):
     needle.assert_screenshot('cleanup_test', threshold=80)
 
     assert not os.path.exists(screenshot_path)
-
