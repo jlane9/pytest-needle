@@ -86,3 +86,50 @@ def test_cleanup_on_success(needle):
     needle.assert_screenshot('cleanup_test', threshold=80)
 
     assert not os.path.exists(screenshot_path)
+
+
+@pytest.mark.output_dir
+def test_output_dir(needle):
+    """Verify that the --needle-output-dir saves the fresh image in the specified directory
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    # Reassign output_dir
+    needle.output_dir = os.path.join(needle.output_dir, 'extra')
+    needle._create_dir(needle.output_dir)
+
+    screenshot_path = os.path.join(needle.output_dir, "output_dir_test.png")
+
+    # Navigate to web page
+    needle.driver.get('https://www.example.com')
+
+    # Take a entire page screen diff
+    needle.assert_screenshot('output_dir_test', threshold=80)
+
+    assert os.path.exists(screenshot_path)
+
+
+@pytest.mark.baseline_dir
+def test_baseline_dir(needle):
+    """Verify that the --needle-baseline-dir saves the fresh image in the specified directory
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    # Reassign output_dir
+    needle.baseline_dir = os.path.join(needle.baseline_dir, 'default')
+    needle._create_dir(needle.baseline_dir)
+
+    screenshot_path = os.path.join(needle.baseline_dir, "baseline_dir_test.png")
+
+    # Navigate to web page
+    needle.driver.get('https://www.example.com')
+
+    # Take a entire page screen diff
+    needle.assert_screenshot('baseline_dir_test', threshold=80)
+
+    assert os.path.exists(screenshot_path)
+
