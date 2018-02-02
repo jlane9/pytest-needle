@@ -150,3 +150,21 @@ def test_viewport_size(needle):
 
     assert needle.driver.get_window_size() != original_size
 
+
+@pytest.mark.engine
+@pytest.mark.parametrize('engine', ('pil', 'perceptualdiff'))
+def test_image_engine(needle, engine):
+    """Verify all image engines can be set
+
+    :param needle:
+    :return:
+    """
+
+    needle.engine_class = engine
+    assert needle.engine_class == needle.ENGINES[engine]
+
+    # Navigate to web page
+    needle.driver.get('https://www.example.com')
+
+    # Take a entire page screen diff
+    needle.assert_screenshot('test_' + engine, threshold=80)
