@@ -7,7 +7,7 @@ python:
 install:
   - pip install -e .
   - pip install -r requirements.txt
-  - sudo apt-get install perceptualdiff
+  - sudo apt-get install imagemagick perceptualdiff
 before_script:
   - pytest --driver BrowserStack --capability os "OS X" --capability os_version "El Capitan" --needle-save-baseline test/
 # command to run tests

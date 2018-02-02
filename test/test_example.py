@@ -152,11 +152,11 @@ def test_viewport_size(needle):
 
 
 @pytest.mark.engine
-@pytest.mark.parametrize('engine', ('pil', 'perceptualdiff'))
+@pytest.mark.parametrize('engine', ('pil', 'perceptualdiff', 'imagemagick'))
 def test_image_engine(needle, engine):
     """Verify all image engines can be set
 
-    :param needle:
+    :param NeedleDriver needle: NeedleDriver instance
     :return:
     """
 
