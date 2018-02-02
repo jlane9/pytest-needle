@@ -108,7 +108,8 @@ def test_output_dir(needle):
     # Take a entire page screen diff
     needle.assert_screenshot('output_dir_test', threshold=80)
 
-    assert os.path.exists(screenshot_path)
+    if not needle.save_baseline:
+        assert os.path.exists(screenshot_path)
 
 
 @pytest.mark.baseline_dir
