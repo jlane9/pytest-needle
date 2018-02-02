@@ -57,14 +57,9 @@ class NeedleDriver(object):
         self.options = kwargs
         self.driver = driver
 
-        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
-
         # Set viewport position, size
         self.driver.set_window_position(0, 0)
-        viewport_dimensions = (int(viewport_size.group('width')), int(viewport_size.group('height'))) if viewport_size \
-            else (int(DEFAULT_VIEWPORT_SIZE.split('x')[0]), int(DEFAULT_VIEWPORT_SIZE.split('x')[1]))
-
-        self.driver.set_window_size(*viewport_dimensions)
+        self.set_viewport()
 
     @staticmethod
     def _create_dir(directory):
@@ -383,6 +378,19 @@ class NeedleDriver(object):
         """
 
         self.options['save_baseline'] = bool(value)
+
+    def set_viewport(self):
+        """Set viewport width, height based off viewport size
+
+        :return:
+        """
+
+        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
+
+        viewport_dimensions = (viewport_size.group('width'), viewport_size.group('height')) if viewport_size \
+            else DEFAULT_VIEWPORT_SIZE.split('x')
+
+        self.driver.set_window_size(*[int(dimension) for dimension in viewport_dimensions])
 
     @property
     def viewport_size(self):
