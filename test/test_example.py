@@ -133,3 +133,20 @@ def test_baseline_dir(needle):
     needle.assert_screenshot('baseline_dir_test', threshold=80)
 
     assert os.path.exists(screenshot_path)
+
+
+@pytest.mark.viewport
+def test_viewport_size(needle):
+    """Verify that viewport size can be
+
+    :param NeedleDriver needle: NeedleDriver instance
+    :return:
+    """
+
+    original_size = needle.driver.get_window_size()
+
+    needle.viewport_size = "900x600"
+    needle.set_viewport()
+
+    assert needle.driver.get_window_size() != original_size
+
