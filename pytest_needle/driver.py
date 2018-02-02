@@ -57,32 +57,9 @@ class NeedleDriver(object):
         self.options = kwargs
         self.driver = driver
 
-        self.save_baseline = kwargs.get('save_baseline', False)
-        self.cleanup_on_success = kwargs.get('cleanup_on_success', False)
-
-        self.baseline_dir = kwargs.get('baseline_dir', DEFAULT_BASELINE_DIR)
-        self.output_dir = kwargs.get('output_dir', DEFAULT_OUTPUT_DIR)
-
-        # Create the output and baseline directories if they do not yet exist.
-        for directory in (self.baseline_dir, self.output_dir):
-            self._create_dir(directory)
-
-        dimensions = kwargs.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
-        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', dimensions)
-
         # Set viewport position, size
         self.driver.set_window_position(0, 0)
-        viewport_dimensions = (int(viewport_size.group('width')), int(viewport_size.group('height'))) if viewport_size \
-            else (int(DEFAULT_VIEWPORT_SIZE.split('x')[0]), int(DEFAULT_VIEWPORT_SIZE.split('x')[1]))
-
-        self.driver.set_window_size(*viewport_dimensions)
-
-        # Instantiate the diff engine
-        engine_config = kwargs.get('needle_engine', 'pil').lower()
-        self.engine_class = self.ENGINES.get(engine_config, DEFAULT_ENGINE)
-
-        klass = import_from_string(self.engine_class)
-        self.engine = klass()
+        self.set_viewport()
 
     @staticmethod
     def _create_dir(directory):
@@ -173,6 +150,77 @@ class NeedleDriver(object):
         window_size = self.driver.get_window_size()
         return window_size['width'], window_size['height']
 
+    @property
+    def baseline_dir(self):
+        """Return baseline image path
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('baseline_dir', DEFAULT_BASELINE_DIR)
+
+    @baseline_dir.setter
+    def baseline_dir(self, value):
+        """Set baseline image directory
+
+        :param str value: File path
+        :return:
+        """
+
+        assert isinstance(value, basestring)
+        self.options['baseline_dir'] = value
+
+    @property
+    def cleanup_on_success(self):
+        """Returns True, if cleanup on success flag is set
+
+        :return:
+        :rtype: bool
+        """
+
+        return self.options.get('cleanup_on_success', False)
+
+    @cleanup_on_success.setter
+    def cleanup_on_success(self, value):
+        """Set cleanup on success flag
+
+        :param bool value: Cleanup on success flag
+        :return:
+        """
+
+        self.options['cleanup_on_success'] = bool(value)
+
+    @property
+    def engine(self):
+        """Return image processing engine
+
+        :return:
+        """
+
+        return import_from_string(self.engine_class)()
+
+    @property
+    def engine_class(self):
+        """Return image processing engine name
+
+        :return:
+        :rtype: str
+        """
+
+        return self.ENGINES.get(self.options.get('needle_engine', 'pil').lower(), DEFAULT_ENGINE)
+
+    @engine_class.setter
+    def engine_class(self, value):
+        """Set image processing engine name
+
+        :param str value: Image processing engine name (pil, imagemagick, perceptualdiff)
+        :return:
+        """
+
+        assert value.lower() in self.ENGINES
+        self.options['needle_engine'] = value.lower()
+
     def get_screenshot(self, element=None):
         """Returns screenshot image
 
@@ -248,28 +296,25 @@ class NeedleDriver(object):
 
         element = self._find_element(element_or_selector)
 
+        # Get baseline screenshot
+        self._create_dir(self.baseline_dir)
+        baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path) \
+            if isinstance(file_path, basestring) else Image.open(file_path).convert('RGB')
+
+        # Take screenshot and exit if in baseline saving mode
+        if self.save_baseline:
+            return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
+
         # Get fresh screenshot
+        self._create_dir(self.output_dir)
         fresh_image = self.get_screenshot_as_image(element, exclude=exclude)
         fresh_image_file = os.path.join(self.output_dir, '%s.png' % file_path)
         fresh_image.save(fresh_image_file)
 
-        # Get baseline image
-        if isinstance(file_path, basestring):
-            baseline_image = os.path.join(self.baseline_dir, '%s.png' % file_path)
-            if self.save_baseline:
-
-                # Take screenshot and exit
-                return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
-
-            else:
-
-                if not os.path.exists(baseline_image):
-                    raise IOError('The baseline screenshot %s does not exist. '
-                                  'You might want to re-run this test in baseline-saving mode.'
-                                  % baseline_image)
-        else:
-            # Comparing in-memory files instead of on-disk files
-            baseline_image = Image.open(file_path).convert('RGB')
+        # Error if there is not a baseline image to compare
+        if not self.save_baseline and not isinstance(file_path, basestring) and not os.path.exists(baseline_image):
+            raise IOError('The baseline screenshot %s does not exist. You might want to '
+                          're-run this test in baseline-saving mode.' % baseline_image)
 
         # Compare images
         if isinstance(baseline_image, basestring):
@@ -277,12 +322,9 @@ class NeedleDriver(object):
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
 
             except AssertionError as err:
-                msg = err.message \
-                    if hasattr(err, "message") \
-                    else err.args[0] if err.args else ""
+                msg = err.message if hasattr(err, "message") else err.args[0] if err.args else ""
                 args = err.args[1:] if len(err.args) > 1 else []
-                raise ImageMismatchException(
-                    msg, baseline_image, fresh_image_file, args)
+                raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
 
             finally:
                 if self.cleanup_on_success:
@@ -294,5 +336,81 @@ class NeedleDriver(object):
             distance = abs(diff.get_distance())
 
             if distance > threshold:
-                pytest.fail('Fail: New screenshot did not match the '
-                            'baseline (by a distance of %.2f)' % distance)
+                pytest.fail('Fail: New screenshot did not match the baseline (by a distance of %.2f)' % distance)
+
+    @property
+    def output_dir(self):
+        """Return output image path
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('output_dir', DEFAULT_OUTPUT_DIR)
+
+    @output_dir.setter
+    def output_dir(self, value):
+        """Set output image directory
+
+        :param str value: File path
+        :return:
+        """
+
+        assert isinstance(value, basestring)
+        self.options['output_dir'] = value
+
+    @property
+    def save_baseline(self):
+        """Returns True, if save baseline flag is set
+
+        :return:
+        :rtype: bool
+        """
+
+        return self.options.get('save_baseline', False)
+
+    @save_baseline.setter
+    def save_baseline(self, value):
+        """Set save baseline flag
+
+        :param bool value: Save baseline flag
+        :return:
+        """
+
+        self.options['save_baseline'] = bool(value)
+
+    def set_viewport(self):
+        """Set viewport width, height based off viewport size
+
+        :return:
+        """
+
+        viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
+
+        viewport_dimensions = (viewport_size.group('width'), viewport_size.group('height')) if viewport_size \
+            else DEFAULT_VIEWPORT_SIZE.split('x')
+
+        self.driver.set_window_size(*[int(dimension) for dimension in viewport_dimensions])
+
+    @property
+    def viewport_size(self):
+        """Return setting for browser window size
+
+        :return:
+        :rtype: str
+        """
+
+        return self.options.get('viewport_size', DEFAULT_VIEWPORT_SIZE)
+
+    @viewport_size.setter
+    def viewport_size(self, value):
+        """Set setting for browser window size
+
+        :param value: Browser window size, as string or (x,y)
+        :return:
+        """
+
+        assert isinstance(value, (basestring, list, tuple))
+        assert len(value) == 2 and all([isinstance(i, int) for i in value]) \
+            if isinstance(value, (list, tuple)) else True
+        self.options['viewport_size'] = value if isinstance(value, basestring) else '{}x{}'.format(*value)
