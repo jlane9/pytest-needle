@@ -16,7 +16,7 @@ setup(name='pytest-needle',
       url=u'https://github.com/jlane9/pytest-needle',
       packages=['pytest_needle'],
       entry_points={'pytest11': ['needle = pytest_needle.plugin', ]},
-      install_requires=['pytest>=3.0.0,<4.0.0', 'needle>=0.5.0,<0.6.0', 'pytest-selenium>=1.10.0,<2.0.0'],
+      install_requires=['pytest>=3.0.0,<5.0.0', 'needle>=0.5.0,<0.6.0', 'pytest-selenium>=1.10.0,<2.0.0'],
       keywords='py.test pytest needle imagemagick perceptualdiff pil selenium visual',
       license=__license__,
       classifiers=[
