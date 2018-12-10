@@ -39,7 +39,6 @@ setup(name='pytest-needle',
           'pytest-selenium>=1.10.0,<2.0.0'
       ],
       python_requires=">=2.7",
-      setup_requires=["pytest-runner"],
       tests_require=[
           "pytest>=3.8.0",
           "pytest-cov>=2.6.0",
