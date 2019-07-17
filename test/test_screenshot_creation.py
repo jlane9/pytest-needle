@@ -3,6 +3,7 @@
 
 import os
 import pytest
+from pytest_needle.exceptions import MissingBaselineException
 
 
 def test_screenshot_creation(needle):
@@ -21,7 +22,7 @@ def test_screenshot_creation(needle):
 
     try:
         needle.assert_screenshot(screenshot_name)
-    except IOError:
+    except MissingBaselineException:
         pass
 
     assert os.path.isfile(screenshot_path), "Fresh screenshot was not created (there is no baseline image)"
