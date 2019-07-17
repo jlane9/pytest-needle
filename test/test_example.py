@@ -42,7 +42,11 @@ def test_example_page_with_mask(needle):
         footer[0].click()
 
     # Take a entire page screen diff, ignore the doodle banner
-    needle.assert_screenshot('search_page', exclude=[(By.ID, 'hplogo'), (By.ID, 'prm')], threshold=80)
+    needle.assert_screenshot('search_page', exclude=[
+        (By.ID, 'hplogo'),
+        (By.ID, 'prm'),
+        (By.XPATH, '//div[@jsmodel]/div/div[//input[@title="Search"] and @jsname and not(@jscontroller)]')
+    ], threshold=80)
 
 
 @pytest.mark.element
