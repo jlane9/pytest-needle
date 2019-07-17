@@ -15,7 +15,7 @@ from needle.cases import import_from_string
 from needle.engines.pil_engine import ImageDiff
 from PIL import Image, ImageDraw, ImageColor
 from selenium.webdriver.remote.webdriver import WebElement
-from pytest_needle.exceptions import ImageMismatchException
+from pytest_needle.exceptions import ImageMismatchException, MissingBaselineException, MissingEngineException
 
 
 if sys.version_info >= (3, 0):
@@ -325,6 +325,18 @@ class NeedleDriver(object):
                 msg = err.message if hasattr(err, "message") else err.args[0] if err.args else ""
                 args = err.args[1:] if len(err.args) > 1 else []
                 raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
+
+            except EnvironmentError:
+                msg = "Missing baseline '{}'. Please run again with --needle-save-baseline".format(baseline_image)
+                raise MissingBaselineException(msg)
+
+            except ValueError as err:
+
+                if self.options['needle_engine'] == 'imagemagick':
+                    msg = "It appears {0} is not installed. Please verify {0} is installed or choose a different engine"
+                    raise MissingEngineException(msg.format(self.options['needle_engine']))
+
+                raise err
 
             finally:
                 if self.cleanup_on_success:
