@@ -34,25 +34,23 @@ setup(name='pytest-needle',
       long_description=read("README.md"),
       long_description_content_type="text/markdown",
       install_requires=[
-          'pytest>=3.0.0,<5.0.0',
+          'pytest>=3.7.0,<5.0.0',
           'needle>=0.5.0,<0.6.0',
-          'pytest-selenium>=1.10.0,<2.0.0'
+          'pytest-selenium>=1.16.0,<2.0.0'
       ],
       python_requires=">=2.7",
       tests_require=[
-          "pytest>=3.8.0",
-          "pytest-cov>=2.6.0",
+          "pytest-cov>=2.7.0",
           "python-coveralls>=2.9.0",
-          "pytest-flask>=0.13.0",
           "pytest-pep8>=1.0.0"
       ],
       extras_require={
           "release": [
               "bumpversion>=0.5.0",
-              "recommonmark>=0.4.0",
+              "recommonmark>=0.5.0",
               "Sphinx>=1.8.0",
               "sphinx-autobuild>=0.7.0",
-              "sphinx-rtd-theme>=0.4.2",
+              "sphinx-rtd-theme>=0.4.0",
           ]
       },
       classifiers=[
