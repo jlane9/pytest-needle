@@ -385,6 +385,9 @@ class NeedleDriver(object):
         :return:
         """
 
+        if self.viewport_size.lower() == 'fullscreen':
+            return self.driver.maximize_window()
+
         viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
 
         viewport_dimensions = (viewport_size.group('width'), viewport_size.group('height')) if viewport_size \

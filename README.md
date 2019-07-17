@@ -106,6 +106,12 @@ You may also set the default viewport size for all your tests by using the comma
 pytest --driver Chrome --needle-viewport-size "1024 x 768" test_example.py
 ```
 
+You can also maximize viewport size for all your tests by using the command line argument `--needle-viewport-size fullscreen`:
+
+```bash
+pytest --driver Chrome --needle-viewport-size fullscreen test_example.py
+```
+
 Excluding areas
 ---------------
 
