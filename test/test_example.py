@@ -161,6 +161,7 @@ def test_image_engine(needle, engine):
     """Verify all image engines can be set
 
     :param NeedleDriver needle: NeedleDriver instance
+    :param engine: Image engine class
     :return:
     """
 

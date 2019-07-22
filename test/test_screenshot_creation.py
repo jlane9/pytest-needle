@@ -17,7 +17,7 @@ def test_screenshot_creation(needle):
         pytest.skip('Only run screenshot creation for non-baseline runs')
 
     screenshot_name = 'screenshot_without_baseline'
-    screenshot_path = os.path.join(needle.output_dir, screenshot_name+".png")
+    screenshot_path = os.path.join(needle.output_dir, screenshot_name + ".png")
     needle.driver.get('https://www.example.com')
 
     try:
