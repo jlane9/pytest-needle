@@ -35,8 +35,9 @@ setup(name='pytest-needle',
       long_description_content_type="text/markdown",
       install_requires=[
           'pytest>=3.7.0,<5.0.0',
+          'pytest-selenium>=1.16.0,<2.0.0',
           'needle>=0.5.0,<0.6.0',
-          'pytest-selenium>=1.16.0,<2.0.0'
+          'selenium>=3.0.0'
       ],
       python_requires=">=2.7",
       tests_require=[

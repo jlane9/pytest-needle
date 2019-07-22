@@ -9,8 +9,6 @@ class NeedleException(AssertionError):
     """Base exception for pytest-needle
     """
 
-    pass
-
 
 class ImageMismatchException(NeedleException):
     """Image mismatch exception

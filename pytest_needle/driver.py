@@ -23,11 +23,7 @@ if sys.version_info >= (3, 0):
     from io import BytesIO as IOClass
 
     # Ignoring since basetring is not redefined if running on python3
-    # pylint: disable=W0622
-    # pylint: disable=C0103
-    basestring = str
-    # pylint: enable=W0622
-    # pylint: enable=C0103
+    basestring = str  # pylint: disable=W0622,C0103
 
 else:
     try:
@@ -42,7 +38,7 @@ DEFAULT_ENGINE = 'needle.engines.pil_engine.Engine'
 DEFAULT_VIEWPORT_SIZE = '1024x768'
 
 
-class NeedleDriver(object):
+class NeedleDriver(object):  # pylint: disable=R0205
     """NeedleDriver instance
     """
 
@@ -90,13 +86,15 @@ class NeedleDriver(object):
         :return:
         """
 
-        if isinstance(element_or_selector, tuple):
+        if isinstance(element_or_selector, tuple):  # pylint: disable=R1705
 
             elements = self.driver.find_elements(*element_or_selector)
             return elements[0] if elements else None
 
         elif isinstance(element_or_selector, WebElement):
             return element_or_selector
+
+        raise ValueError("element_or_selector must be a WebElement or tuple selector")
 
     @staticmethod
     def _get_element_dimensions(element):
@@ -119,6 +117,8 @@ class NeedleDriver(object):
                 'height': int(size['height'])
             }
 
+        raise ValueError("element must be a WebElement")
+
     def _get_element_rect(self, element):
         """Returns the two points that define the rectangle
 
@@ -136,6 +136,8 @@ class NeedleDriver(object):
                 (dimensions['left'] + dimensions['width']),
                 (dimensions['top'] + dimensions['height'])
             )
+
+        return ()
 
     @staticmethod
     def _get_ratio(image_size, window_size):
@@ -294,7 +296,7 @@ class NeedleDriver(object):
         :return:
         """
 
-        element = self._find_element(element_or_selector)
+        element = self._find_element(element_or_selector) if element_or_selector else None
 
         # Get baseline screenshot
         self._create_dir(self.baseline_dir)
@@ -303,7 +305,8 @@ class NeedleDriver(object):
 
         # Take screenshot and exit if in baseline saving mode
         if self.save_baseline:
-            return self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
+            self.get_screenshot_as_image(element, exclude=exclude).save(baseline_image)
+            return
 
         # Get fresh screenshot
         self._create_dir(self.output_dir)
@@ -322,7 +325,7 @@ class NeedleDriver(object):
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
 
             except AssertionError as err:
-                msg = err.message if hasattr(err, "message") else err.args[0] if err.args else ""
+                msg = getattr(err, 'message', err.args[0] if err.args else "")
                 args = err.args[1:] if len(err.args) > 1 else []
                 raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
 
@@ -398,7 +401,8 @@ class NeedleDriver(object):
         """
 
         if self.viewport_size.lower() == 'fullscreen':
-            return self.driver.maximize_window()
+            self.driver.maximize_window()
+            return
 
         viewport_size = re.match(r'(?P<width>\d+)\s?[xX]\s?(?P<height>\d+)', self.viewport_size)
 
