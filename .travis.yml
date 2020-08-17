@@ -12,6 +12,6 @@ before_script:
   - pytest --driver BrowserStack --capability os "OS X" --capability os_version "El Capitan" --needle-save-baseline test/
 # command to run tests
 script:
-  - pytest --driver BrowserStack --capability os "OS X" --capability os_version "El Capitan" --pep8 pytest_needle --cov pytest_needle/ --cov-report term-missing test/
+  - pytest --driver BrowserStack --capability os "OS X" --capability os_version "El Capitan" --pycodestyle pytest_needle --cov pytest_needle/ --cov-report term-missing test/
 after_success:
   - coveralls
