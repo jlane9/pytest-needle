@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0d1b1c4d166b2bf5fe845451af3467f6d7d896e931c92b0fd656d9c5f96ab563"
+            "sha256": "e88c860b9f01ac870a158f6b7a650b6b074c969f994a62ac5bd02f027b6f40ad"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -380,11 +380,11 @@
         },
         "pytest-selenium": {
             "hashes": [
-                "sha256:caf049839d12297e01f0521a968e44ae854f4eca1afd80b28f6a2510df02c883",
-                "sha256:e8034ebabc3b55fad57bfb97e7b0b2137532dbc65f33706e1ce1ed8e547caa1a"
+                "sha256:114bc1df383b0bb841a62ad03b222aa57d0866d57f03f81b539e59fcf43231b8",
+                "sha256:6a7c655c9202fa5964b872859d8aad18a67ccbdfbaa078d154cab82914d70504"
             ],
             "index": "pypi",
-            "version": "==1.17.0"
+            "version": "==2.0.0"
         },
         "pytest-variables": {
             "hashes": [
@@ -534,6 +534,13 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==1.1.4"
+        },
+        "tenacity": {
+            "hashes": [
+                "sha256:29ae90e7faf488a8628432154bb34ace1cca58244c6ea399fd33f066ac71339a",
+                "sha256:5a5d3dcd46381abe8b4f82b5736b8726fd3160c6c7161f53f8af7f1eb9b82173"
+            ],
+            "version": "==6.2.0"
         },
         "toml": {
             "hashes": [
