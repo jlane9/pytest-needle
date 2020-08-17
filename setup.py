@@ -5,7 +5,9 @@
 """
 
 import os
+
 from setuptools import setup
+
 from pytest_needle import __author__, __email__, __license__, __version__
 
 
@@ -34,7 +36,7 @@ setup(name='pytest-needle',
       long_description=read("README.md"),
       long_description_content_type="text/markdown",
       install_requires=[
-          'pytest>=3.7.0,<5.0.0',
+          'pytest>=3.7.0,<7.0.0',
           'pytest-selenium>=1.16.0,<2.0.0',
           'needle>=0.5.0,<0.6.0',
           'selenium>=3.0.0'
