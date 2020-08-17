@@ -5,11 +5,11 @@
 """
 
 import os
+
 import pytest
 from selenium.webdriver.common.by import By
 
 
-@pytest.mark.page
 def test_example_page(needle):
     """Example for comparing entire pages
 
@@ -24,7 +24,6 @@ def test_example_page(needle):
     needle.assert_screenshot('static_page', threshold=80)
 
 
-@pytest.mark.mask
 def test_example_page_with_mask(needle):
     """Example for comparing page with a mask
 
@@ -49,7 +48,6 @@ def test_example_page_with_mask(needle):
     ], threshold=80)
 
 
-@pytest.mark.element
 def test_example_element(needle):
     """Example for comparing individual elements
 
@@ -70,7 +68,6 @@ def test_example_element(needle):
     needle.assert_screenshot('search_field', (By.ID, 'tsf'), threshold=80)
 
 
-@pytest.mark.cleanup
 def test_cleanup_on_success(needle):
     """Verify that the --needle-cleanup-on-success removes the newly generated file
 
@@ -92,7 +89,6 @@ def test_cleanup_on_success(needle):
     assert not os.path.exists(screenshot_path)
 
 
-@pytest.mark.output_dir
 def test_output_dir(needle):
     """Verify that the --needle-output-dir saves the fresh image in the specified directory
 
@@ -116,7 +112,6 @@ def test_output_dir(needle):
         assert os.path.exists(screenshot_path)
 
 
-@pytest.mark.baseline_dir
 def test_baseline_dir(needle):
     """Verify that the --needle-baseline-dir saves the fresh image in the specified directory
 
@@ -139,7 +134,6 @@ def test_baseline_dir(needle):
     assert os.path.exists(screenshot_path)
 
 
-@pytest.mark.viewport
 def test_viewport_size(needle):
     """Verify that viewport size can be
 
@@ -155,7 +149,6 @@ def test_viewport_size(needle):
     assert needle.driver.get_window_size() != original_size
 
 
-@pytest.mark.engine
 @pytest.mark.parametrize('engine', ('pil', 'perceptualdiff', 'imagemagick'))
 def test_image_engine(needle, engine):
     """Verify all image engines can be set
